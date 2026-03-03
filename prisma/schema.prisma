@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String
+  createdAt DateTime  @default(now())
+  offertes  Offerte[]
+  facturen  Factuur[]
+  notities  Notitie[]
+}
+
+model Notitie {
+  id        Int      @id @default(autoincrement())
+  tekst     String
+  klant     Customer @relation(fields: [klantId], references: [id], onDelete: Cascade)
+  klantId   Int
+  createdAt DateTime @default(now())
+}
+
+model Instelling {
+  id    Int    @id @default(autoincrement())
+  sleutel String @unique
+  waarde  String
+}
+
+model Offerte {
+  id        Int            @id @default(autoincrement())
+  nummer    String         @unique
+  klant     Customer       @relation(fields: [klantId], references: [id])
+  klantId   Int
+  datum     DateTime       @default(now())
+  geldigTot DateTime
+  status    String         @default("concept")
+  notities  String?
+  regels    OfferteRegel[]
+  subtotaal Float          @default(0)
+  btwBedrag Float          @default(0)
+  totaal    Float          @default(0)
+  createdAt DateTime       @default(now())
+}
+
+model OfferteRegel {
+  id            Int     @id @default(autoincrement())
+  offerte       Offerte @relation(fields: [offerteId], references: [id], onDelete: Cascade)
+  offerteId     Int
+  omschrijving  String
+  aantal        Float
+  eenheidsprijs Float
+  btw           Int     @default(21)
+  totaal        Float
+}
+
+model Factuur {
+  id          Int            @id @default(autoincrement())
+  nummer      String         @unique
+  klant       Customer       @relation(fields: [klantId], references: [id])
+  klantId     Int
+  datum       DateTime       @default(now())
+  vervaldatum DateTime
+  status      String         @default("openstaand")
+  notities    String?
+  regels      FactuurRegel[]
+  subtotaal   Float          @default(0)
+  btwBedrag   Float          @default(0)
+  totaal      Float          @default(0)
+  createdAt   DateTime       @default(now())
+}
+
+model FactuurRegel {
+  id            Int     @id @default(autoincrement())
+  factuur       Factuur @relation(fields: [factuurId], references: [id], onDelete: Cascade)
+  factuurId     Int
+  omschrijving  String
+  aantal        Float
+  eenheidsprijs Float
+  btw           Int     @default(21)
+  totaal        Float
+}
