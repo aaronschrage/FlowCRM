@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 interface Notitie {
   id: number;
@@ -33,23 +34,30 @@ export default function NotitiesClient({
 
     if (res.ok) {
       setTekst("");
+      toast.success("Notitie toegevoegd");
       router.refresh();
+    } else {
+      toast.error("Notitie toevoegen mislukt");
     }
     setLoading(false);
   }
 
   async function handleVerwijder(notitieId: number) {
-    await fetch(`/api/klanten/${klantId}/notities`, {
+    const res = await fetch(`/api/klanten/${klantId}/notities`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ notitieId }),
     });
-    router.refresh();
+    if (res.ok) {
+      toast.success("Notitie verwijderd");
+      router.refresh();
+    } else {
+      toast.error("Verwijderen mislukt");
+    }
   }
 
   return (
     <div>
-      {/* Invoer */}
       <textarea
         value={tekst}
         onChange={(e) => setTekst(e.target.value)}
@@ -71,7 +79,6 @@ export default function NotitiesClient({
         </button>
       </div>
 
-      {/* Lijst */}
       {bestaandeNotities.length === 0 ? (
         <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", textAlign: "center", padding: "16px 0" }}>
           Nog geen notities — voeg er een toe!
@@ -79,19 +86,31 @@ export default function NotitiesClient({
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {bestaandeNotities.map((n) => (
-            <div key={n.id} style={{
-              padding: "12px 16px",
-              borderRadius: 8,
-              background: "var(--bg-elevated)",
-              border: "1px solid var(--border)",
-              display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12
-            }}>
+            <div
+              key={n.id}
+              style={{
+                padding: "12px 16px",
+                borderRadius: 8,
+                background: "var(--bg-elevated)",
+                border: "1px solid var(--border-base)",
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                gap: 12,
+              }}
+            >
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
                   {n.tekst}
                 </p>
                 <p style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: 6 }}>
-                  {new Date(n.createdAt).toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                  {new Date(n.createdAt).toLocaleDateString("nl-NL", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </p>
               </div>
               <button

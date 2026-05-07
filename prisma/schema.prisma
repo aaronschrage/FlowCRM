@@ -8,13 +8,17 @@ datasource db {
 }
 
 model Customer {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String
-  createdAt DateTime  @default(now())
-  offertes  Offerte[]
-  facturen  Factuur[]
-  notities  Notitie[]
+  id                  Int              @id @default(autoincrement())
+  name                String
+  email               String
+  createdAt           DateTime         @default(now())
+  portalAccessEnabled Boolean          @default(false)
+  portalLastLogin     DateTime?
+  offertes            Offerte[]
+  facturen            Factuur[]
+  notities            Notitie[]
+  portalSessions      PortalSession[]
+  portalActivities    PortalActivity[]
 }
 
 model Notitie {
@@ -68,10 +72,11 @@ model Factuur {
   status      String         @default("openstaand")
   notities    String?
   regels      FactuurRegel[]
-  subtotaal   Float          @default(0)
-  btwBedrag   Float          @default(0)
-  totaal      Float          @default(0)
-  createdAt   DateTime       @default(now())
+  subtotaal       Float    @default(0)
+  btwBedrag       Float    @default(0)
+  totaal          Float    @default(0)
+  molliePaymentId String?
+  createdAt       DateTime @default(now())
 }
 
 model FactuurRegel {
@@ -83,4 +88,24 @@ model FactuurRegel {
   eenheidsprijs Float
   btw           Int     @default(21)
   totaal        Float
+}
+
+model PortalSession {
+  id        String    @id @default(cuid())
+  klant     Customer  @relation(fields: [klantId], references: [id], onDelete: Cascade)
+  klantId   Int
+  tokenHash String    @unique
+  sessionId String?   @unique
+  createdAt DateTime  @default(now())
+  expiresAt DateTime
+  usedAt    DateTime?
+}
+
+model PortalActivity {
+  id        String   @id @default(cuid())
+  klant     Customer @relation(fields: [klantId], references: [id], onDelete: Cascade)
+  klantId   Int
+  type      String
+  metadata  String?
+  createdAt DateTime @default(now())
 }

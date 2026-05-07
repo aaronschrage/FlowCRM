@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Building, Mail, Phone, MapPin, Globe, FileText } from "lucide-react";
+import { Building, FileText } from "lucide-react";
+import { toast } from "sonner";
 
 export default function InstellingenClient({ huidig }: { huidig: Record<string, string> }) {
   const [form, setForm] = useState({
@@ -16,7 +17,6 @@ export default function InstellingenClient({ huidig }: { huidig: Record<string, 
     betalingstermijn: huidig.betalingstermijn || "30",
   });
   const [loading, setLoading] = useState(false);
-  const [opgeslagen, setOpgeslagen] = useState(false);
 
   const update = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
 
@@ -29,8 +29,9 @@ export default function InstellingenClient({ huidig }: { huidig: Record<string, 
     });
 
     if (res.ok) {
-      setOpgeslagen(true);
-      setTimeout(() => setOpgeslagen(false), 2500);
+      toast.success("Instellingen opgeslagen");
+    } else {
+      toast.error("Opslaan mislukt — probeer opnieuw");
     }
     setLoading(false);
   }
@@ -102,7 +103,7 @@ export default function InstellingenClient({ huidig }: { huidig: Record<string, 
 
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button className="btn btn-primary" onClick={handleOpslaan} disabled={loading} style={{ minWidth: 140 }}>
-          {opgeslagen ? <><Check size={15} /> Opgeslagen!</> : loading ? "Opslaan..." : "Instellingen opslaan"}
+          {loading ? "Opslaan..." : "Instellingen opslaan"}
         </button>
       </div>
     </div>

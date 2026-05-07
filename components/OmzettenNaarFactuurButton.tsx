@@ -3,6 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function OmzettenNaarFactuurButton({
   offerteId,
@@ -12,13 +23,13 @@ export default function OmzettenNaarFactuurButton({
   offerteStatus: string;
 }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Alleen tonen als offerte nog niet afgewezen of al omgezet
   if (offerteStatus === "afgewezen") return null;
 
   async function handleOmzetten() {
+    setOpen(false);
     setLoading(true);
     const res = await fetch(`/api/offertes/${offerteId}/naar-factuur`, {
       method: "POST",
@@ -26,47 +37,44 @@ export default function OmzettenNaarFactuurButton({
 
     if (res.ok) {
       const data = await res.json();
-      setOpen(false);
+      toast.success("Offerte omgezet naar factuur");
       router.push(`/klanten/${data.klantId}/factuur/${data.factuurId}`);
       router.refresh();
     } else {
-      alert("Er ging iets mis.");
+      toast.error("Omzetten mislukt — probeer opnieuw");
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (
     <>
-      <button className="btn btn-primary" onClick={() => setOpen(true)}>
+      <button
+        className="btn btn-primary"
+        onClick={() => setOpen(true)}
+        disabled={loading}
+      >
         <ArrowRight size={15} />
-        Omzetten naar factuur
+        {loading ? "Omzetten..." : "Omzetten naar factuur"}
       </button>
 
-      {open && (
-        <div style={{
-          position: "fixed", inset: 0, zIndex: 100,
-          background: "rgba(0,0,0,0.6)",
-          display: "flex", alignItems: "center", justifyContent: "center"
-        }}>
-          <div className="card" style={{ maxWidth: 420, width: "90%", padding: 32 }}>
-            <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 12 }}>
-              Offerte omzetten naar factuur?
-            </h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: 24, lineHeight: 1.6 }}>
-              Alle regelitems worden gekopieerd naar een nieuwe factuur. De offerte wordt automatisch op <strong>geaccepteerd</strong> gezet.
-            </p>
-            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-              <button className="btn btn-ghost" onClick={() => setOpen(false)} disabled={loading}>
-                Annuleren
-              </button>
-              <button className="btn btn-primary" onClick={handleOmzetten} disabled={loading}>
-                <ArrowRight size={14} />
-                {loading ? "Omzetten..." : "Ja, maak factuur"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Offerte omzetten naar factuur?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Alle regelitems worden gekopieerd naar een nieuwe factuur. De offerte wordt
+              automatisch op <strong className="text-foreground">geaccepteerd</strong> gezet.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction onClick={handleOmzetten}>
+              <ArrowRight size={14} />
+              Ja, maak factuur
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

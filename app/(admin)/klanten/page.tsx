@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { addCustomer } from "../actions/customers";
+import { addCustomer } from "../../actions/customers";
 import { Users, Plus, Mail, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import VerwijderKlantButton from "@/components/VerwijderKlantButton";

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Plus, Trash2, Receipt } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface Regel {
   id: number;
@@ -72,15 +73,16 @@ export default function NieuweFactuurClient({
       });
 
       if (res.ok) {
+        toast.success("Factuur aangemaakt");
         router.push(`/klanten/${klantId}`);
         router.refresh();
       } else {
         const err = await res.json();
-        alert("Fout: " + err.error);
+        toast.error("Fout: " + (err.error ?? "Probeer opnieuw"));
         setLoading(false);
       }
-    } catch (err) {
-      alert("Er ging iets mis");
+    } catch {
+      toast.error("Er ging iets mis — probeer opnieuw");
       setLoading(false);
     }
   }

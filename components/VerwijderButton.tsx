@@ -3,6 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function VerwijderButton({
   id,
@@ -20,45 +31,55 @@ export default function VerwijderButton({
   const [loading, setLoading] = useState(false);
 
   async function handleVerwijder() {
+    setOpen(false);
     setLoading(true);
-    await fetch(`/api/${type === "offerte" ? "offertes" : "facturen"}/${id}`, {
-      method: "DELETE",
-    });
-    router.push(`/klanten/${klantId}`);
-    router.refresh();
+    const res = await fetch(
+      `/api/${type === "offerte" ? "offertes" : "facturen"}/${id}`,
+      { method: "DELETE" }
+    );
+    if (res.ok) {
+      toast.success(`${type === "offerte" ? "Offerte" : "Factuur"} ${nummer} verwijderd`);
+      router.push(`/klanten/${klantId}`);
+      router.refresh();
+    } else {
+      toast.error("Verwijderen mislukt — probeer opnieuw");
+      setLoading(false);
+    }
   }
 
   return (
     <>
-      <button className="btn btn-danger btn-sm" onClick={() => setOpen(true)}>
+      <button
+        className="btn btn-danger btn-sm"
+        onClick={() => setOpen(true)}
+        disabled={loading}
+      >
         <Trash2 size={14} />
-        Verwijder
+        {loading ? "Verwijderen..." : "Verwijder"}
       </button>
 
-      {open && (
-        <div style={{
-          position: "fixed", inset: 0, zIndex: 100,
-          background: "rgba(0,0,0,0.6)",
-          display: "flex", alignItems: "center", justifyContent: "center"
-        }}>
-          <div className="card" style={{ maxWidth: 400, width: "90%", padding: 32 }}>
-            <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 12 }}>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
               {type === "offerte" ? "Offerte" : "Factuur"} verwijderen?
-            </h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: 24, lineHeight: 1.6 }}>
-              Weet je zeker dat je <strong style={{ color: "var(--text-primary)" }}>{nummer}</strong> wilt verwijderen? Dit kan niet ongedaan worden gemaakt.
-            </p>
-            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-              <button className="btn btn-ghost" onClick={() => setOpen(false)} disabled={loading}>
-                Annuleren
-              </button>
-              <button className="btn btn-danger" onClick={handleVerwijder} disabled={loading}>
-                {loading ? "Verwijderen..." : "Ja, verwijder"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Weet je zeker dat je <strong className="text-foreground">{nummer}</strong> wilt
+              verwijderen? Dit kan niet ongedaan worden gemaakt.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleVerwijder}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              Ja, verwijder
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

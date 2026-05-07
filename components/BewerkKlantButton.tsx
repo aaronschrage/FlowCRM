@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Edit, X, Check } from "lucide-react";
+import { Edit } from "lucide-react";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function BewerkKlantButton({
   klantId,
@@ -31,9 +39,10 @@ export default function BewerkKlantButton({
 
     if (res.ok) {
       setOpen(false);
+      toast.success("Klantgegevens bijgewerkt");
       router.refresh();
     } else {
-      alert("Er ging iets mis.");
+      toast.error("Opslaan mislukt — probeer opnieuw");
     }
     setLoading(false);
   }
@@ -45,58 +54,51 @@ export default function BewerkKlantButton({
         Bewerken
       </button>
 
-      {open && (
-        <div style={{
-          position: "fixed", inset: 0, zIndex: 100,
-          background: "rgba(0,0,0,0.6)",
-          display: "flex", alignItems: "center", justifyContent: "center"
-        }}>
-          <div className="card" style={{ maxWidth: 440, width: "90%", padding: 32 }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
-              <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                Klant bewerken
-              </h2>
-              <button
-                onClick={() => setOpen(false)}
-                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", padding: 4 }}
-              >
-                <X size={18} />
-              </button>
-            </div>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Klant bewerken</DialogTitle>
+          </DialogHeader>
 
-            <div className="form-group">
-              <label className="form-label">Naam</label>
-              <input
-                value={naam}
-                onChange={(e) => setNaam(e.target.value)}
-                className="form-input"
-                placeholder="Naam klant"
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">E-mail</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="form-input"
-                placeholder="email@voorbeeld.nl"
-              />
-            </div>
-
-            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 8 }}>
-              <button className="btn btn-ghost" onClick={() => setOpen(false)} disabled={loading}>
-                Annuleren
-              </button>
-              <button className="btn btn-primary" onClick={handleOpslaan} disabled={loading}>
-                <Check size={14} />
-                {loading ? "Opslaan..." : "Opslaan"}
-              </button>
-            </div>
+          <div className="form-group" style={{ marginTop: 8 }}>
+            <label className="form-label">Naam</label>
+            <input
+              value={naam}
+              onChange={(e) => setNaam(e.target.value)}
+              className="form-input"
+              placeholder="Naam klant"
+            />
           </div>
-        </div>
-      )}
+
+          <div className="form-group">
+            <label className="form-label">E-mail</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="form-input"
+              placeholder="email@voorbeeld.nl"
+            />
+          </div>
+
+          <DialogFooter>
+            <button
+              className="btn btn-ghost"
+              onClick={() => setOpen(false)}
+              disabled={loading}
+            >
+              Annuleren
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={handleOpslaan}
+              disabled={loading || !naam.trim() || !email.trim()}
+            >
+              {loading ? "Opslaan..." : "Opslaan"}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

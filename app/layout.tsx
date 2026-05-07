@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Sidebar from "@/components/Sidebar";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata: Metadata = {
   title: "FlowCRM",
   description: "Klantenbeheer, offertes en facturen voor MKB",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="nl">
+    <html lang="nl" className="dark">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -23,12 +20,10 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <div className="app-shell">
-          <Sidebar />
-          <main className="main-content">
-            {children}
-          </main>
-        </div>
+        <TooltipProvider>
+          {children}
+          <Toaster position="bottom-right" richColors />
+        </TooltipProvider>
       </body>
     </html>
   );
