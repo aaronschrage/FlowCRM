@@ -133,6 +133,96 @@ export function magicLinkEmail({
 </html>`;
 }
 
+// ── Admin notification: klant heeft offerte geaccepteerd/afgewezen ──
+
+interface OfferteNotificationProps {
+  type: "geaccepteerd" | "afgewezen";
+  offerteNummer: string;
+  klantNaam: string;
+  klantEmail: string;
+  clientNotes?: string;
+  companyName?: string;
+}
+
+export function offerteNotificationEmail({
+  type,
+  offerteNummer,
+  klantNaam,
+  klantEmail,
+  clientNotes,
+  companyName = "FlowCRM",
+}: OfferteNotificationProps): string {
+  const isAcc = type === "geaccepteerd";
+  const kleur = isAcc ? "#16a34a" : "#dc2626";
+  const label = isAcc ? "Geaccepteerd" : "Afgewezen";
+  const icon = isAcc ? "&#10003;" : "&#10007;";
+
+  return `<!DOCTYPE html>
+<html lang="nl">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0" /></head>
+<body style="margin:0;padding:0;background:#f0f2f8;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:#f0f2f8;padding:48px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" border="0" role="presentation"
+        style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        <tr>
+          <td style="background:#0c0e12;padding:28px 40px;">
+            <table cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>
+              <td style="width:36px;height:36px;background:#4f7cff;border-radius:8px;text-align:center;vertical-align:middle;">
+                <span style="color:#fff;font-size:18px;line-height:36px;display:block;">&#9889;</span>
+              </td>
+              <td style="padding-left:12px;vertical-align:middle;">
+                <span style="color:#fff;font-size:18px;font-weight:700;">${esc(companyName)}</span>
+              </td>
+            </tr></table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:36px 40px 0;">
+            <table cellpadding="0" cellspacing="0" border="0" role="presentation">
+              <tr>
+                <td style="width:32px;height:32px;background:${kleur};border-radius:50%;text-align:center;vertical-align:middle;">
+                  <span style="color:#fff;font-size:16px;font-weight:700;">${icon}</span>
+                </td>
+                <td style="padding-left:12px;vertical-align:middle;">
+                  <span style="font-size:12px;color:#8b93b0;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;">Offerte ${label}</span>
+                </td>
+              </tr>
+            </table>
+            <h1 style="margin:20px 0 8px;font-size:22px;font-weight:700;color:#0c0e12;">
+              ${esc(klantNaam)} heeft offerte ${esc(offerteNummer)} <span style="color:${kleur};">${label.toLowerCase()}</span>
+            </h1>
+            <p style="margin:0 0 24px;font-size:14px;color:#4a5070;">${esc(klantEmail)}</p>
+          </td>
+        </tr>
+        ${clientNotes ? `
+        <tr>
+          <td style="padding:0 40px 32px;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
+              style="background:#f8f9fc;border-radius:10px;border:1px solid #eaecf4;">
+              <tr><td style="padding:16px 20px;">
+                <p style="margin:0 0 6px;font-size:11px;color:#8b93b0;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;">
+                  Opmerking klant
+                </p>
+                <p style="margin:0;font-size:14px;color:#0c0e12;line-height:1.6;">${esc(clientNotes)}</p>
+              </td></tr>
+            </table>
+          </td>
+        </tr>` : ""}
+        <tr>
+          <td style="background:#f8f9fc;padding:20px 40px;border-top:1px solid #eaecf4;">
+            <p style="margin:0;font-size:11px;color:#b0b8cc;text-align:center;">
+              Automatisch bericht van ${esc(companyName)} &mdash; &copy; ${new Date().getFullYear()}
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
 // Minimal HTML escape for user-supplied strings inside the template
 function esc(str: string): string {
   return str

@@ -45,10 +45,13 @@ model Offerte {
   status    String         @default("concept")
   notities  String?
   regels    OfferteRegel[]
-  subtotaal Float          @default(0)
-  btwBedrag Float          @default(0)
-  totaal    Float          @default(0)
-  createdAt DateTime       @default(now())
+  subtotaal   Float     @default(0)
+  btwBedrag   Float     @default(0)
+  totaal      Float     @default(0)
+  clientNotes String?
+  acceptedAt  DateTime?
+  rejectedAt  DateTime?
+  createdAt   DateTime  @default(now())
 }
 
 model OfferteRegel {
