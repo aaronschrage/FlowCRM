@@ -2,8 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { renderToBuffer } from "@react-pdf/renderer";
-import FactuurPDF from "@/components/FactuurPDF";
-import React from "react";
+import { createFactuurPDFElement } from "@/components/FactuurPDF";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -21,7 +20,7 @@ export async function POST(req: Request, props: any) {
     }
 
     const pdfBuffer = await renderToBuffer(
-      React.createElement(FactuurPDF, { factuur })
+      createFactuurPDFElement({ factuur }),
     );
 
     const fmt = (n: number) =>

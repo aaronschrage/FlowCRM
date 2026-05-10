@@ -1,9 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
-import OffertePDF from "@/components/OffertePDF";
+import { createOffertePDFElement } from "@/components/OffertePDF";
 import { getInstellingen } from "@/lib/instellingen";
-import React from "react";
 
 export async function GET(req: Request, props: any) {
   try {
@@ -22,7 +21,7 @@ export async function GET(req: Request, props: any) {
     }
 
     const buffer = await renderToBuffer(
-      React.createElement(OffertePDF, {
+      createOffertePDFElement({
         offerte,
         bedrijfsnaam: instellingen.bedrijfsnaam || "Mijn Bedrijf",
         bedrijfEmail: instellingen.email || "",
@@ -32,10 +31,10 @@ export async function GET(req: Request, props: any) {
         kvk: instellingen.kvk || "",
         btwnummer: instellingen.btwnummer || "",
         iban: instellingen.iban || "",
-      })
+      }),
     );
 
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${offerte.nummer}.pdf"`,

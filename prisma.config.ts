@@ -1,8 +1,2 @@
-import { defineConfig } from "prisma/config";
-
-export default defineConfig({
-  schema: "prisma/schema.prisma",
-  datasource: {
-    url: "file:./dev.db",
-  },
-});
+// prisma.config.ts is a Prisma 6+ feature; not used in Prisma 5.x.
+export {};

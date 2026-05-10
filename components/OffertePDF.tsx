@@ -1,4 +1,5 @@
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import React from "react";
+import { Document, Page, Text, View, StyleSheet, type DocumentProps } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
   page: { fontFamily: "Helvetica", fontSize: 10, padding: 48, backgroundColor: "#ffffff", color: "#1a1a2e" },
@@ -45,6 +46,13 @@ interface OffertePDFProps {
   kvk?: string;
   btwnummer?: string;
   iban?: string;
+}
+
+export function createOffertePDFElement(
+  props: OffertePDFProps,
+): React.ReactElement<DocumentProps> {
+  // Safe cast: OffertePDF renders <Document> as its root, satisfying renderToBuffer's type.
+  return React.createElement(OffertePDF, props) as React.ReactElement<DocumentProps>;
 }
 
 export default function OffertePDF({

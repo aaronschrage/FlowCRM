@@ -2,8 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { renderToBuffer } from "@react-pdf/renderer";
-import OffertePDF from "@/components/OffertePDF";
-import React from "react";
+import { createOffertePDFElement } from "@/components/OffertePDF";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -22,7 +21,7 @@ export async function POST(req: Request, props: any) {
 
     // Genereer PDF
     const pdfBuffer = await renderToBuffer(
-      React.createElement(OffertePDF, { offerte })
+      createOffertePDFElement({ offerte }),
     );
 
     // Verstuur e-mail
