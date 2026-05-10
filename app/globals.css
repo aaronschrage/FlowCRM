@@ -570,6 +570,112 @@ body {
 ::-webkit-scrollbar-track { background: var(--bg-base); }
 ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
 
+/* ─── Marketing / Landing Page ──────────────────────────────── */
+.landing-nav-link {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.landing-nav-link:hover { color: var(--text-primary); }
+
+.landing-nav-btn {
+  display: inline-block;
+  padding: 8px 18px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.landing-nav-btn:hover { background: var(--accent-hover); }
+
+.landing-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 28px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  box-shadow: 0 4px 24px rgba(79,124,255,0.3);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.landing-btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 6px 32px rgba(79,124,255,0.45);
+}
+
+.landing-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 24px;
+  border: 1px solid var(--border-base);
+  color: var(--text-primary);
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+.landing-btn-ghost:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-light);
+}
+
+.landing-pricing-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.landing-pricing-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(79,124,255,0.25);
+}
+.landing-pricing-btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 6px 24px rgba(79,124,255,0.4);
+}
+.landing-pricing-btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+.landing-pricing-btn-ghost:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.landing-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 16px 36px;
+  background: #fff;
+  color: #0c0e12;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.landing-cta-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+
+html { scroll-behavior: smooth; }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
